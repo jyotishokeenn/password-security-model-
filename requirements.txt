@@ -2,5 +2,3 @@ streamlit
 google-generativeai
 pandas
 tabulate
-langchain-google-genai
-langchain
