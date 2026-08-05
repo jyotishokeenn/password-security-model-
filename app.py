@@ -132,33 +132,34 @@ def security_score(score, entropy, risks):
 
 
 def generate_password_policy(org_type, employees, security_level, api_key):
+    try:
+        genai.configure(api_key=api_key)
 
-    genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-2.5-flash")
 
-    model = genai.GenerativeModel("gemini-2.5-flash")
+        prompt = f"""
+        Generate a professional password security policy.
 
-    prompt = f"""
-    Generate a professional password security policy.
+        Organization Type: {org_type}
+        Number of Employees: {employees}
+        Security Level: {security_level}
 
-    Organization Type: {org_type}
-    Number of Employees: {employees}
-    Security Level: {security_level}
+        Include:
+        - Minimum password length
+        - Complexity requirements
+        - Password expiry policy
+        - Password history policy
+        - Multi-factor authentication
+        - Account lockout policy
+        - Best practices
+        """
 
-    Include:
-    - Minimum password length
-    - Complexity requirements
-    - Password expiry policy
-    - Password history policy
-    - Multi-factor authentication
-    - Account lockout policy
-    - Best practices
-    """
+        response = model.generate_content(prompt)
+        return response.text
 
-    response = model.generate_content(prompt)
-    return response.text
-except Exception as e:
-    return f"Error: {str(e)}"
-
+    except Exception as e:
+        return f"Error: {str(e)}"
+        
 st.set_page_config(
     page_title="Password Security Advisor",
     page_icon="🔐"
