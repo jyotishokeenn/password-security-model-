@@ -2,9 +2,11 @@ import streamlit as st
 import re
 import math
 import google.generativeai as genai
-from langchain_google_genai import ChatGoogleGenerativeAI
 
 
+# -----------------------------
+# Password Strength Checker
+# -----------------------------
 def password_strength(password):
     score = 0
     feedback = []
@@ -48,6 +50,9 @@ def password_strength(password):
     return strength, score, feedback
 
 
+# -----------------------------
+# Entropy Calculator
+# -----------------------------
 def calculate_entropy(password):
     charset = 0
 
@@ -70,12 +75,20 @@ def calculate_entropy(password):
     return round(entropy, 2)
 
 
+# -----------------------------
+# Risk Analyzer
+# -----------------------------
 def risk_analyzer(password):
     risks = []
 
     common_passwords = [
-        "password", "123456", "12345678",
-        "qwerty", "admin", "welcome", "abc123"
+        "password",
+        "123456",
+        "12345678",
+        "qwerty",
+        "admin",
+        "welcome",
+        "abc123"
     ]
 
     if password.lower() in common_passwords:
@@ -85,9 +98,15 @@ def risk_analyzer(password):
         risks.append("Repeated characters detected.")
 
     patterns = [
-        "1234", "2345", "3456",
-        "4567", "5678", "6789",
-        "abcd", "bcde", "cdef"
+        "1234",
+        "2345",
+        "3456",
+        "4567",
+        "5678",
+        "6789",
+        "abcd",
+        "bcde",
+        "cdef"
     ]
 
     for p in patterns:
@@ -98,6 +117,9 @@ def risk_analyzer(password):
     return risks
 
 
+# -----------------------------
+# Recommendation Engine
+# -----------------------------
 def recommendation_engine(password):
     recommendations = []
 
@@ -119,6 +141,9 @@ def recommendation_engine(password):
     return recommendations
 
 
+# -----------------------------
+# Security Score
+# -----------------------------
 def security_score(score, entropy, risks):
     final_score = score * 15
 
@@ -132,49 +157,62 @@ def security_score(score, entropy, risks):
     return max(0, min(100, final_score))
 
 
+# -----------------------------
+# Gemini Policy Generator
+# -----------------------------
 def generate_password_policy(org_type, employees, security_level, api_key):
     try:
         genai.configure(api_key=api_key)
 
-        model= ChatGoogleGenerativeAI(
-    model="gemini-3.5-flash-lite"
+        model = genai.GenerativeModel(
+            "gemini-2.5-flash"
         )
 
         prompt = f"""
-        Generate a professional password security policy.
+Generate a professional password security policy.
 
-        Organization Type: {org_type}
-        Number of Employees: {employees}
-        Security Level: {security_level}
+Organization Type: {org_type}
+Number of Employees: {employees}
+Security Level: {security_level}
 
-        Include:
-        - Minimum password length
-        - Complexity requirements
-        - Password expiry policy
-        - Password history policy
-        - Multi-factor authentication
-        - Account lockout policy
-        - Best practices
-        """
+Include:
+1. Minimum Password Length
+2. Complexity Requirements
+3. Password Expiry Policy
+4. Password History Policy
+5. Multi-Factor Authentication
+6. Account Lockout Policy
+7. Security Best Practices
 
-        response = model.ChatGoogleGenerativeAI(prompt)
+Format the response professionally.
+"""
+
+        response = model.generate_content(prompt)
+
         return response.text
 
     except Exception as e:
         return f"Error: {str(e)}"
-        
+
+
+# -----------------------------
+# Streamlit UI
+# -----------------------------
 st.set_page_config(
     page_title="Password Security Advisor",
-    page_icon="🔐"
+    page_icon="🔐",
+    layout="wide"
 )
 
 st.title("🔐 Password Security Advisor")
 
-tab1, tab2 = st.tabs([
-    "Password Analysis",
-    "Policy Generator"
-])
+tab1, tab2 = st.tabs(
+    ["Password Analysis", "Policy Generator"]
+)
 
+# =============================
+# TAB 1
+# =============================
 with tab1:
 
     password = st.text_input(
@@ -200,9 +238,16 @@ with tab1:
 
         st.subheader("Security Report")
 
-        st.metric("Strength", strength)
-        st.metric("Entropy", f"{entropy} bits")
-        st.metric("Security Score", f"{sec_score}/100")
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.metric("Strength", strength)
+
+        with col2:
+            st.metric("Entropy", f"{entropy} bits")
+
+        with col3:
+            st.metric("Security Score", f"{sec_score}/100")
 
         st.progress(sec_score / 100)
 
@@ -222,11 +267,19 @@ with tab1:
         else:
             st.success("Excellent Password!")
 
+
+# =============================
+# TAB 2
+# =============================
 with tab2:
 
-    st.subheader("Organization Password Policy Generator")
+    st.subheader(
+        "Organization Password Policy Generator"
+    )
 
-    org_type = st.text_input("Organization Type")
+    org_type = st.text_input(
+        "Organization Type"
+    )
 
     employees = st.number_input(
         "Number of Employees",
@@ -247,7 +300,9 @@ with tab2:
 
         if api_key:
 
-            with st.spinner("Generating Policy..."):
+            with st.spinner(
+                "Generating Password Policy..."
+            ):
 
                 policy = generate_password_policy(
                     org_type,
@@ -262,4 +317,6 @@ with tab2:
                     st.markdown(policy)
 
         else:
-            st.error("Please enter Gemini API Key.")
+            st.error(
+                "Please enter your Gemini API Key."
+            )
