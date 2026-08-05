@@ -3,9 +3,7 @@ import re
 import math
 import google.generativeai as genai
 
-# -----------------------------
 # Password Strength Checker
-# -----------------------------
 def password_strength(password):
     score = 0
 
@@ -35,10 +33,7 @@ def password_strength(password):
     else:
         return "Very Strong", score
 
-
-# -----------------------------
 # Entropy Calculator
-# -----------------------------
 def calculate_entropy(password):
     charset = 0
 
@@ -60,10 +55,7 @@ def calculate_entropy(password):
     entropy = len(password) * math.log2(charset)
     return round(entropy, 2)
 
-
-# -----------------------------
 # Risk Analyzer
-# -----------------------------
 def risk_analyzer(password):
     risks = []
 
@@ -96,10 +88,7 @@ def risk_analyzer(password):
 
     return risks
 
-
-# -----------------------------
 # Recommendations
-# -----------------------------
 def recommendation_engine(password):
     rec = []
 
@@ -120,10 +109,7 @@ def recommendation_engine(password):
 
     return rec
 
-
-# -----------------------------
 # Security Score
-# -----------------------------
 def security_score(score, entropy, risks):
     final = score * 15
 
@@ -136,10 +122,7 @@ def security_score(score, entropy, risks):
 
     return max(0, min(100, final))
 
-
-# -----------------------------
 # Gemini Policy Generator
-# -----------------------------
 def generate_password_policy(org_type, employees, security_level, api_key):
 
     try:
@@ -176,10 +159,7 @@ Format professionally.
     except Exception as e:
         return f"Error: {e}"
 
-
-# -----------------------------
 # Streamlit UI
-# -----------------------------
 st.set_page_config(
     page_title="Password Security Advisor",
     page_icon="🔐",
@@ -192,9 +172,7 @@ tab1, tab2 = st.tabs(
     ["Password Analysis", "Policy Generator"]
 )
 
-# ==================================================
 # PASSWORD ANALYSIS
-# ==================================================
 with tab1:
 
     password = st.text_input(
@@ -248,10 +226,7 @@ with tab1:
         else:
             st.success("Excellent Password")
 
-
-# ==================================================
 # POLICY GENERATOR
-# ==================================================
 with tab2:
 
     st.subheader(
