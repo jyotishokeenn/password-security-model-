@@ -135,7 +135,7 @@ def generate_password_policy(org_type, employees, security_level, api_key):
 
     genai.configure(api_key=api_key)
 
-    model = genai.GenerativeModel("gemini-3.5-flash=lite")
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     prompt = f"""
     Generate a professional password security policy.
@@ -156,6 +156,8 @@ def generate_password_policy(org_type, employees, security_level, api_key):
 
     response = model.generate_content(prompt)
     return response.text
+except Exception as e:
+    return f"Error: {str(e)}"
 
 st.set_page_config(
     page_title="Password Security Advisor",
@@ -250,7 +252,10 @@ with tab2:
                     api_key
                 )
 
-                st.markdown(policy)
+                if policy.startswith("Error:"):
+                    st.error(policy)
+                else:
+                    st.markdown(policy)
 
         else:
             st.error("Please enter Gemini API Key.")
