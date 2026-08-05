@@ -156,7 +156,7 @@ def generate_password_policy(org_type, employees, security_level, api_key):
         - Best practices
         """
 
-        response = model.generate_content(prompt)
+        response = model.ChatGoogleGenerativeAI(prompt)
         return response.text
 
     except Exception as e:
