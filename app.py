@@ -135,7 +135,7 @@ def generate_password_policy(org_type, employees, security_level, api_key):
     try:
         genai.configure(api_key=api_key)
 
-        model = genai.GenerativeModel("gemini-2.5-flash")
+        model = genai.GenerativeModel("gemini-3.5-flash=lite")
 
         prompt = f"""
         Generate a professional password security policy.
