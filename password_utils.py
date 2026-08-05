@@ -1,0 +1,6 @@
+password_strength()
+calculate_entropy()
+risk_analyzer()
+recommendation_engine()
+security_score()
+generate_password_policy()
