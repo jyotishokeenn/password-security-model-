@@ -3,10 +3,6 @@ import re
 import math
 import google.generativeai as genai
 
-
-# -----------------------------
-# Password Strength Checker
-# -----------------------------
 def password_strength(password):
     score = 0
     feedback = []
@@ -165,7 +161,7 @@ def generate_password_policy(org_type, employees, security_level, api_key):
         genai.configure(api_key=api_key)
 
         model = genai.GenerativeModel(
-            "gemini-2.5-flash"
+            "gemini-3.5-flash-lite"
         )
 
         prompt = f"""
