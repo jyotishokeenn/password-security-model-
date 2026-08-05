@@ -2,6 +2,7 @@ import streamlit as st
 import re
 import math
 import google.generativeai as genai
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 def password_strength(password):
