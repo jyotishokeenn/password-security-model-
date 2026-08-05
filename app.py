@@ -3,47 +3,37 @@ import re
 import math
 import google.generativeai as genai
 
+# -----------------------------
+# Password Strength Checker
+# -----------------------------
 def password_strength(password):
     score = 0
-    feedback = []
 
     if len(password) >= 12:
         score += 2
     elif len(password) >= 8:
         score += 1
-    else:
-        feedback.append("Password should be at least 8 characters long.")
 
     if re.search(r"[A-Z]", password):
         score += 1
-    else:
-        feedback.append("Add at least one uppercase letter.")
 
     if re.search(r"[a-z]", password):
         score += 1
-    else:
-        feedback.append("Add at least one lowercase letter.")
 
     if re.search(r"\d", password):
         score += 1
-    else:
-        feedback.append("Add at least one number.")
 
     if re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
         score += 1
-    else:
-        feedback.append("Add at least one special character.")
 
     if score <= 2:
-        strength = "Weak"
+        return "Weak", score
     elif score <= 4:
-        strength = "Medium"
+        return "Medium", score
     elif score == 5:
-        strength = "Strong"
+        return "Strong", score
     else:
-        strength = "Very Strong"
-
-    return strength, score, feedback
+        return "Very Strong", score
 
 
 # -----------------------------
@@ -88,99 +78,95 @@ def risk_analyzer(password):
     ]
 
     if password.lower() in common_passwords:
-        risks.append("Common password detected.")
+        risks.append("Common password detected")
 
     if re.search(r"(.)\1{2,}", password):
-        risks.append("Repeated characters detected.")
+        risks.append("Repeated characters detected")
 
     patterns = [
-        "1234",
-        "2345",
-        "3456",
-        "4567",
-        "5678",
-        "6789",
-        "abcd",
-        "bcde",
-        "cdef"
+        "1234", "2345", "3456",
+        "4567", "5678", "6789",
+        "abcd", "bcde", "cdef"
     ]
 
     for p in patterns:
-        if p.lower() in password.lower():
-            risks.append("Sequential pattern detected.")
+        if p in password.lower():
+            risks.append("Sequential pattern detected")
             break
 
     return risks
 
 
 # -----------------------------
-# Recommendation Engine
+# Recommendations
 # -----------------------------
 def recommendation_engine(password):
-    recommendations = []
+    rec = []
 
     if len(password) < 12:
-        recommendations.append("Use at least 12 characters.")
+        rec.append("Use at least 12 characters")
 
     if not re.search(r"[A-Z]", password):
-        recommendations.append("Add uppercase letters.")
+        rec.append("Add uppercase letters")
 
     if not re.search(r"[a-z]", password):
-        recommendations.append("Add lowercase letters.")
+        rec.append("Add lowercase letters")
 
     if not re.search(r"\d", password):
-        recommendations.append("Add numbers.")
+        rec.append("Add numbers")
 
     if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
-        recommendations.append("Add special characters.")
+        rec.append("Add special characters")
 
-    return recommendations
+    return rec
 
 
 # -----------------------------
 # Security Score
 # -----------------------------
 def security_score(score, entropy, risks):
-    final_score = score * 15
+    final = score * 15
 
     if entropy > 60:
-        final_score += 20
+        final += 20
     elif entropy > 40:
-        final_score += 10
+        final += 10
 
-    final_score -= len(risks) * 10
+    final -= len(risks) * 10
 
-    return max(0, min(100, final_score))
+    return max(0, min(100, final))
 
 
 # -----------------------------
 # Gemini Policy Generator
 # -----------------------------
 def generate_password_policy(org_type, employees, security_level, api_key):
+
     try:
         genai.configure(api_key=api_key)
 
         model = genai.GenerativeModel(
-            "gemini-3.5-flash-lite"
+            "gemini-1.5-flash"
         )
 
         prompt = f"""
-Generate a professional password security policy.
+Create a professional password security policy.
 
 Organization Type: {org_type}
-Number of Employees: {employees}
+Employees: {employees}
 Security Level: {security_level}
 
 Include:
-1. Minimum Password Length
-2. Complexity Requirements
-3. Password Expiry Policy
-4. Password History Policy
+
+1. Password Length
+2. Password Complexity
+3. Password Expiry
+4. Password History
 5. Multi-Factor Authentication
-6. Account Lockout Policy
+6. Account Lockout Rules
 7. Security Best Practices
 
-Format the response professionally.
+Format professionally.
 """
 
         response = model.generate_content(prompt)
@@ -188,7 +174,7 @@ Format the response professionally.
         return response.text
 
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Error: {e}"
 
 
 # -----------------------------
@@ -206,9 +192,9 @@ tab1, tab2 = st.tabs(
     ["Password Analysis", "Policy Generator"]
 )
 
-# =============================
-# TAB 1
-# =============================
+# ==================================================
+# PASSWORD ANALYSIS
+# ==================================================
 with tab1:
 
     password = st.text_input(
@@ -218,7 +204,11 @@ with tab1:
 
     if st.button("Analyze Password"):
 
-        strength, score, feedback = password_strength(password)
+        if not password:
+            st.error("Please enter a password.")
+            st.stop()
+
+        strength, score = password_strength(password)
 
         entropy = calculate_entropy(password)
 
@@ -234,39 +224,34 @@ with tab1:
 
         st.subheader("Security Report")
 
-        col1, col2, col3 = st.columns(3)
+        c1, c2, c3 = st.columns(3)
 
-        with col1:
-            st.metric("Strength", strength)
-
-        with col2:
-            st.metric("Entropy", f"{entropy} bits")
-
-        with col3:
-            st.metric("Security Score", f"{sec_score}/100")
+        c1.metric("Strength", strength)
+        c2.metric("Entropy", f"{entropy} bits")
+        c3.metric("Score", f"{sec_score}/100")
 
         st.progress(sec_score / 100)
 
         st.subheader("Risks")
 
         if risks:
-            for risk in risks:
-                st.warning(risk)
+            for r in risks:
+                st.warning(r)
         else:
             st.success("No major risks detected.")
 
         st.subheader("Recommendations")
 
         if recommendations:
-            for rec in recommendations:
-                st.info(rec)
+            for r in recommendations:
+                st.info(r)
         else:
-            st.success("Excellent Password!")
+            st.success("Excellent Password")
 
 
-# =============================
-# TAB 2
-# =============================
+# ==================================================
+# POLICY GENERATOR
+# ==================================================
 with tab2:
 
     st.subheader(
@@ -294,10 +279,13 @@ with tab2:
 
     if st.button("Generate Policy"):
 
-        if api_key:
+        if not api_key:
+            st.error("Please enter Gemini API Key")
+
+        else:
 
             with st.spinner(
-                "Generating Password Policy..."
+                "Generating Policy..."
             ):
 
                 policy = generate_password_policy(
@@ -307,12 +295,4 @@ with tab2:
                     api_key
                 )
 
-                if policy.startswith("Error:"):
-                    st.error(policy)
-                else:
-                    st.markdown(policy)
-
-        else:
-            st.error(
-                "Please enter your Gemini API Key."
-            )
+                st.markdown(policy)
