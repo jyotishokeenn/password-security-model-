@@ -135,7 +135,7 @@ def generate_password_policy(org_type, employees, security_level, api_key):
 
     genai.configure(api_key=api_key)
 
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-3.5-flash=lite")
 
     prompt = f"""
     Generate a professional password security policy.
@@ -157,11 +157,6 @@ def generate_password_policy(org_type, employees, security_level, api_key):
     response = model.generate_content(prompt)
     return response.text
 
-
-# -----------------------------
-# STREAMLIT UI
-# -----------------------------
-
 st.set_page_config(
     page_title="Password Security Advisor",
     page_icon="🔐"
@@ -173,10 +168,6 @@ tab1, tab2 = st.tabs([
     "Password Analysis",
     "Policy Generator"
 ])
-
-# -----------------------------
-# TAB 1
-# -----------------------------
 
 with tab1:
 
