@@ -3,6 +3,12 @@ import re
 import math
 import google.generativeai as genai
 
+# PROJECT IMAGE 
+st.image(
+    "https://humanfocus.co.uk/blog/why-is-password-security-important-for-your-business/",
+    use_container_width=True
+)
+
 # Password Strength Checker
 def password_strength(password):
     score = 0
