@@ -6,7 +6,7 @@ import google.generativeai as genai
 # PROJECT IMAGE 
 st.image(
     "https://humanfocus.co.uk/wp-content/uploads/password-security-800x800.jpg",
-    width=350
+    width=500
 )
 
 # Password Strength Checker
